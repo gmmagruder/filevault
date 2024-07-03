@@ -156,7 +156,7 @@ Open your browser and navigate to `http://localhost:3000`.
 
 ## To-Do
 
-- [ ] **Use a Database for Persistent Data**: Replace the `filesData.json` with a database (e.g., MongoDB, PostgreSQL) to store file metadata persistently.
+- [x] **Use a Database for Persistent Data**: Replace the `filesData.json` with a database (e.g., MongoDB, PostgreSQL) to store file metadata persistently.
 
 - [ ] **User Authentication**: Implement user authentication to manage user-specific files securely.
 
