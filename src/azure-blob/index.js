@@ -70,7 +70,6 @@ app.get('/files', async(req, res) => {
     });
 
     const results  = await connection.query('SELECT * FROM file');
-    console.log(results[0]);
     res.json(results[0]);
     connection.end();
 });
