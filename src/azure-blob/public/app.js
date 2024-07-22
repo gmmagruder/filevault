@@ -57,8 +57,8 @@ async function loadFiles() {
         const row = document.createElement('tr');
         row.innerHTML = `
             <td>${file.name}</td>
-            <td>${file.key}</td>
-            <td><button onclick="deleteFile('${file.key}')">Delete</button></td>
+            <td>${file.fileKey}</td>
+            <td><button onclick="deleteFile('${file.fileKey}')">Delete</button></td>
         `;
         table.querySelector('tbody').appendChild(row);
     });
