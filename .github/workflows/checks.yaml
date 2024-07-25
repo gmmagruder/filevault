@@ -16,12 +16,12 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: 18
-      - run: cd src/azure-blob
       - name: Check yarn version
         run: yarn --version
       - name: Install yarn
         run: yarn install
       - name: Run lint check
+        working-directory: ./src/azure-blob
         run: yarn lint
       - name: Run unit tests
         run: yarn test
