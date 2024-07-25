@@ -18,7 +18,8 @@ jobs:
           node-version: 18
       - name: Check yarn version
         run: yarn --version
-      - name: Install yarn
+      - name: Install packages
+        working-directory: ./src/azure-blob
         run: yarn install
       - name: Run lint check
         working-directory: ./src/azure-blob
