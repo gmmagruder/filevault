@@ -25,6 +25,7 @@ jobs:
         working-directory: ./src/azure-blob
         run: yarn lint
       - name: Run unit tests
+        working-directory: ./src/azure-blob
         run: yarn test
 
   sonarcloud:
