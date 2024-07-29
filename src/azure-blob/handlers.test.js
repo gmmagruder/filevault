@@ -1,8 +1,6 @@
-// eslint-disable-line no-dupe-keys
 process.env = {
     AZURE_STORAGE_ACCOUNT_NAME: 'test name',
-    AZURE_STORAGE_ACCOUNT_KEY: 'test key',
-    AZURE_STORAGE_ACCOUNT_NAME: 'testurl'
+    AZURE_STORAGE_ACCOUNT_KEY: 'test key'
 };
 
 const handlers = require('./handlers');
