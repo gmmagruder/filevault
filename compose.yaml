@@ -1,0 +1,6 @@
+services:
+  nodejs:
+    build: .
+    ports:
+      - "8000:3000"
+    
