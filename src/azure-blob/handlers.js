@@ -36,7 +36,7 @@ async function uploadFile(req, res) {
             await blockBlobClient.uploadFile(req.file.path);
             fs.unlinkSync(req.file.path); // remove the file locally after upload
 
-            connection.query('INSERT INTO file (name, filekey) VALUES (?,?)', [fileName, blobName]);
+            connection.query('INSERT INTO file (name, fileKey) VALUES (?,?)', [fileName, blobName]);
             connection.end();
 
             res.status(200).send('File uploaded successfully.');
