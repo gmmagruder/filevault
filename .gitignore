@@ -3,6 +3,7 @@
 
 # Environment variables
 **/.env
+**/db.env
 
 # Logs
 logs/
