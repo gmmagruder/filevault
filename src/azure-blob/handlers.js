@@ -26,6 +26,7 @@ async function uploadFile(req, res) {
             const connection = await mysql.createConnection({
                 host: process.env.DATABASE_HOST,
                 user: process.env.DATABASE_USER,
+                password: process.env.DATABASE_PASSWORD,
                 port: process.env.DATABASE_PORT,
                 database: process.env.DATABASE_NAME,
             });
@@ -36,7 +37,7 @@ async function uploadFile(req, res) {
             await blockBlobClient.uploadFile(req.file.path);
             fs.unlinkSync(req.file.path); // remove the file locally after upload
 
-            connection.query('INSERT INTO file (name, filekey) VALUES (?,?)', [fileName, blobName]);
+            connection.query('INSERT INTO file (name, fileKey) VALUES (?,?)', [fileName, blobName]);
             connection.end();
 
             res.status(200).send('File uploaded successfully.');
@@ -53,6 +54,7 @@ async function getFiles(req, res) {
     const connection = await mysql.createConnection({
         host: process.env.DATABASE_HOST,
         user: process.env.DATABASE_USER,
+        password: process.env.DATABASE_PASSWORD,
         port: process.env.DATABASE_PORT,
         database: process.env.DATABASE_NAME,
     });
@@ -69,6 +71,7 @@ async function deleteFile(req, res) {
         const connection = await mysql.createConnection({
             host: process.env.DATABASE_HOST,
             user: process.env.DATABASE_USER,
+            password: process.env.DATABASE_PASSWORD,
             port: process.env.DATABASE_PORT,
             database: process.env.DATABASE_NAME,
         });

@@ -1,0 +1,15 @@
+services:
+  nodejs:
+    container_name: app
+    build: .
+    ports:
+      - "8000:3000"
+  mysql:
+    container_name: db
+    image: mysql:8.0.39
+    ports:
+      - "3306:3306"
+    env_file:
+      - db/db.env
+    volumes:
+      - ./db/schema.sql:/docker-entrypoint-initdb.d/1.sql
