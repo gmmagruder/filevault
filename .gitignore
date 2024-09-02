@@ -30,3 +30,8 @@ Thumbs.db
 
 # Uploads
 **/uploads/
+
+.terraform/**
+**/azurek8s
+**/*.tfplan
+**/*.tfstate*
