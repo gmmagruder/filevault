@@ -1,0 +1,21 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: filevault-deployment
+  labels:
+    app: filevault-deployment
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: filevault
+  template:
+    metadata:
+      labels:
+        app: filevault
+    spec:
+      containers:
+      - name: filevault
+        image: filevaultterraform.azurecr.io/filevault
+        ports:
+        - containerPort: 3000

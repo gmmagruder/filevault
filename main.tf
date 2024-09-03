@@ -31,17 +31,6 @@ resource "azurerm_container_registry" "acr" {
   admin_enabled       = true
 }
 
-# Push docker image to azure
-resource "null_resource" "docker_push" {
-  provisioner "local-exec" {
-  command = <<-EOT
-  docker login -u ${azurerm_container_registry.acr.admin_username} -p ${azurerm_container_registry.acr.admin_password} ${azurerm_container_registry.acr.login_server}
-  docker tag ${var.docker_container_name} ${azurerm_container_registry.acr.login_server}/filevault
-  docker push ${azurerm_container_registry.acr.login_server}/filevault
-  EOT
-  }
-}
-
 # Kubernets set up
 resource "azurerm_kubernetes_cluster" "k8s" {
   location            = azurerm_resource_group.rg.location
@@ -72,7 +61,7 @@ resource "azurerm_kubernetes_cluster" "k8s" {
 }
 
 # Attach container registry to kubernetes cluster
-resource "azurerm_role_assignment" "example" {
+resource "azurerm_role_assignment" "ara" {
   principal_id                     = azurerm_kubernetes_cluster.k8s.kubelet_identity[0].object_id
   role_definition_name             = "AcrPull"
   scope                            = azurerm_container_registry.acr.id
