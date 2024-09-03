@@ -36,3 +36,4 @@ Thumbs.db
 **/azurek8s1
 **/*.tfplan
 **/*.tfstate*
+**/.terraform.lock.hcl
