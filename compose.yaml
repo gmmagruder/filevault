@@ -1,11 +1,13 @@
 services:
   nodejs:
     container_name: app
+    platform: linux/amd64
     build: .
     ports:
       - "8000:3000"
   mysql:
     container_name: db
+    platform: linux/amd64
     image: mysql:8.0.39
     ports:
       - "3306:3306"
