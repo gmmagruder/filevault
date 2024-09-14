@@ -1,9 +1,9 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: filevault-deployment
+  name: filevault
   labels:
-    app: filevault-deployment
+    app: filevault
 spec:
   replicas: 1
   selector:
@@ -18,4 +18,56 @@ spec:
       - name: filevault
         image: filevaultterraform.azurecr.io/filevault
         ports:
-        - containerPort: 3000
+        - containerPort: 8080
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: db
+  labels:
+    app: db
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: db
+  template:
+    metadata:
+      labels:
+        app: db
+    spec:
+      containers:
+      - name: db
+        image: filevaultterraform.azurecr.io/db
+        ports:
+        - containerPort: 3306
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: filevault
+spec:
+  ports:
+  - port: 80
+    targetPort: 8080
+  selector:
+    app: filevault
+  type: LoadBalancer
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: filevault
+  annotations:
+    kubernetes.io/ingress.class: addon-http-application-routing
+spec:
+  rules:
+    - http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: filevault
+                port:
+                  number: 80

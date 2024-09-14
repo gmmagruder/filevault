@@ -1,0 +1,11 @@
+---
+- hosts: localhost
+  tasks:
+    - name: Deleting resource group - "filevaultAnsible"
+      azure_rm_resourcegroup:
+        name: "filevaultAnsible"
+        state: absent
+        force_delete_nonempty: true
+      register: rg
+    - debug:
+        var: rg
