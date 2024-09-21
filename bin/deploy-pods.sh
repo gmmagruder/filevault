@@ -26,3 +26,7 @@ envsubst < kubernetes/azure-secrets.yaml | kubectl apply -f -
 kubectl apply -f kubernetes/mysql-initdb-configmap.yaml
 kubectl apply -f kubernetes/db-deployment.yaml
 kubectl apply -f kubernetes/filevault-deployment.yaml
+
+# Output IP address of where filevault can be accessed by HTTP
+sleep 10
+echo "IP address: $(kubectl get service/filevault -o jsonpath='{.status.loadBalancer.ingress[0].ip}')"

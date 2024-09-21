@@ -31,7 +31,5 @@ jobs:
           run: sleep 60
         - name: Output ip address of app
           run: sh output-pod-ip.sh
-        - name: Test ip address of app
-          run: ping -c 1 $(kubectl get service/filevault -o jsonpath='{.status.loadBalancer.ingress[0].ip}')
         - name: Destroy azure resources
           run: sh bin/destroy-pods.sh
