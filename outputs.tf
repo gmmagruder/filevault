@@ -55,3 +55,13 @@ output "acr_login_server" {
   value     = azurerm_container_registry.acr.login_server
   sensitive = true
 }
+
+output "client_id" {
+  value     = azurerm_kubernetes_cluster.k8s.key_vault_secrets_provider[0].secret_identity[0].client_id
+  sensitive = true
+}
+
+output "tenant_id" {
+  value     = data.azurerm_client_config.current.tenant_id
+  sensitive = true
+}
