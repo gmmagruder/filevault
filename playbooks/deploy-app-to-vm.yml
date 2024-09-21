@@ -8,25 +8,25 @@
   tasks:
   - name: Copy src directory to server
     synchronize:
-      src: ./src/azure-blob
+      src: ../src/azure-blob
       dest: ./src
       rsync_opts:
       - "--exclude=node_modules"
   - name: Copy db directory to server
     synchronize:
-      src: ./db
+      src: ../db
       dest: .
   - name: Copy nginx directory to server
     synchronize:
-      src: ./nginx
+      src: ../nginx
       dest: .
   - name: Copy docker file to server
     synchronize:
-      src: ./Dockerfile
+      src: ../Dockerfile
       dest: .
   - name: Copy compose file to server
     synchronize:
-      src: ./compose.yaml
+      src: ../compose.yaml
       dest: .
   - name: Update apt cache
     become: yes

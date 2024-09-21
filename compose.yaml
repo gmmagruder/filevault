@@ -5,6 +5,8 @@ services:
     build: .
     ports:
       - "8080:3000"
+    depends_on:
+      - mysql
   mysql:
     container_name: db
     platform: linux/amd64
@@ -23,3 +25,5 @@ services:
     image: nginx
     ports:
       - 80:80
+    depends_on:
+      - nodejs
