@@ -202,3 +202,158 @@ resource "azurerm_role_assignment" "akv_kubelet" {
   role_definition_name = "Key Vault Secrets Officer"
   principal_id         = azurerm_kubernetes_cluster.k8s.key_vault_secrets_provider[0].secret_identity[0].object_id
 }
+
+# Monitoring and Logging
+resource "azurerm_monitor_workspace" "amw" {
+  name                = var.monitor_workspace_name
+  resource_group_name = azurerm_resource_group.rg.name
+  location            = azurerm_resource_group.rg.location
+}
+
+resource "azurerm_monitor_data_collection_endpoint" "dce" {
+  name                = var.data_collection_name
+  resource_group_name = azurerm_resource_group.rg.name
+  location            = azurerm_resource_group.rg.location
+  kind                = "Linux"
+}
+
+resource "azurerm_monitor_data_collection_rule" "dcr" {
+  name                        = var.data_collection_rule
+  resource_group_name         = azurerm_resource_group.rg.name
+  location                    = azurerm_resource_group.rg.location
+  data_collection_endpoint_id = azurerm_monitor_data_collection_endpoint.dce.id
+  kind                        = "Linux"
+
+  destinations {
+    monitor_account {
+      monitor_account_id = azurerm_monitor_workspace.amw.id
+      name               = "MonitoringAccount1"
+    }
+  }
+
+  data_flow {
+    streams      = ["Microsoft-PrometheusMetrics"]
+    destinations = ["MonitoringAccount1"]
+  }
+
+  data_sources {
+    prometheus_forwarder {
+      streams = ["Microsoft-PrometheusMetrics"]
+      name    = "PrometheusDataSource"
+    }
+  }
+
+  description = "DCR for Azure Monitor Metrics Profile (Managed Prometheus)"
+  depends_on = [
+    azurerm_monitor_data_collection_endpoint.dce
+  ]
+}
+
+resource "azurerm_monitor_alert_prometheus_rule_group" "kubernetes_recording_rules_rule_group" {
+  name                = "ClusterCriticalAlerts"
+  location            = azurerm_resource_group.rg.location
+  resource_group_name = azurerm_resource_group.rg.name
+  cluster_name        = azurerm_kubernetes_cluster.k8s.name
+  description         = "Kubernetes Recording Rules Rule Group"
+  rule_group_enabled  = true
+  interval            = "PT1M"
+  scopes              = [azurerm_monitor_workspace.amw.id,azurerm_kubernetes_cluster.k8s.id]
+
+  rule {
+    alert     = "KubernetesPodFailure"
+    enabled   = true
+    expression = <<EOF
+      kube_pod_container_status_restarts_total{job="kube-state-metrics"} > 0
+    EOF
+
+    for       = "PT5M"
+    severity  = 2
+    annotations = {
+      summary = "Pod failure detected"
+    }
+    labels = {
+      severity = "critical"
+    }
+  }
+
+  rule {
+    alert     = "HighCPUUsage"
+    enabled   = true
+    expression = <<EOF
+      sum(rate(container_cpu_usage_seconds_total{job="kubelet", image!="", container!="POD"}[5m])) by (pod) > 0.8
+    EOF
+    
+    for       = "PT5M"
+    severity  = 2
+    annotations = {
+      summary = "High CPU usage detected"
+    }
+    labels = {
+      severity = "critical"
+    }
+  }
+
+  rule {
+    alert     = "HighMemoryUsage"
+    enabled   = true
+    expression = <<EOF
+      sum(container_memory_usage_bytes{job="kubelet", image!="", container!="POD"}) by (pod) > 1e+09
+    EOF
+    for       = "PT5M"
+    severity  = 2
+    annotations = {
+      summary = "High memory usage detected"
+    }
+    labels = {
+      severity = "critical"
+    }
+  }
+
+  rule {
+    alert     = "NodeNotReady"
+    enabled   = true
+    expression = <<EOF
+      kube_node_status_condition{condition="Ready", status="false"} == 1
+    EOF
+    for       = "PT5M"
+    severity  = 2
+    annotations = {
+      summary = "Node not ready detected"
+    }
+    labels = {
+      severity = "critical"
+    }
+  }
+
+  rule {
+    alert     = "DiskPressure"
+    enabled   = true
+    expression = <<EOF
+      kube_node_status_condition{condition="DiskPressure", status="true"} == 1
+    EOF
+    for       = "PT5M"
+    severity  = 2
+    annotations = {
+      summary = "Disk pressure detected"
+    }
+    labels = {
+      severity = "critical"
+    }
+  }
+
+  rule {
+    alert     = "PodOOMKilled"
+    enabled   = true
+    expression = <<EOF
+    kube_pod_container_status_terminated_reason{reason="OOMKilled"} > 0
+    EOF
+    for       = "PT5M"
+    severity  = 2
+    annotations = {
+      summary = "Pod OOMKilled detected"
+    }
+    labels = {
+      severity = "critical"
+    }
+  }
+}

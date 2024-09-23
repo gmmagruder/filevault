@@ -119,3 +119,25 @@ variable "db_root_password_secret" {
   description = "Name db root password secret"
   default     = "db-root-password"
 }
+
+variable "monitor_workspace_name" {
+  type        = string
+  description = "Name of azure monitor"
+  default     = "filevault-monitor"
+}
+
+variable "data_collection_name" {
+  type        = string
+  description = "Name of data collection"
+  default     = "filevault-data-collection"
+}
+
+variable "data_collection_rule" {
+  type        = string
+  description = "Name of data collection rule"
+  default     = "filevault-data-collection-rule"
+}
+
+variable "grafana_name" {
+  default = "filevault-grafana-prometheus"
+}
