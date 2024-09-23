@@ -30,3 +30,7 @@ provider "azurerm" {
     }
   }
 }
+
+provider "azapi" {
+  use_msi = false
+}
