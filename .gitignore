@@ -30,3 +30,14 @@ Thumbs.db
 
 # Uploads
 **/uploads/
+
+# Terraform
+.terraform/**
+**/azurek8s
+**/azurek8s1
+**/*.tfplan
+**/*.tfstate*
+**/.terraform.lock.hcl
+
+# Ansible
+hosts

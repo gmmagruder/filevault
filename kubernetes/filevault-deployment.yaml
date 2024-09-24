@@ -1,0 +1,85 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: filevault
+  labels:
+    app: filevault
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: filevault
+  template:
+    metadata:
+      labels:
+        app: filevault
+    spec:
+      containers:
+      - name: filevault
+        image: filevaultterraform.azurecr.io/filevault
+        env:
+        - name: AZURE_STORAGE_ACCOUNT_NAME
+          valueFrom:
+            secretKeyRef:
+              name: keyvault
+              key: storageAccountName
+        - name: AZURE_STORAGE_ACCOUNT_KEY
+          valueFrom:
+            secretKeyRef:
+              name: keyvault
+              key: storageAccountKey
+        - name: AZURE_CONTAINER_NAME
+          valueFrom:
+            secretKeyRef:
+              name: keyvault
+              key: storageContainerName
+        - name: PORT
+          value: "3000"
+        - name: DATABASE_HOST
+          valueFrom:
+            secretKeyRef:
+              name: keyvault
+              key: dbHost
+        - name: DATABASE_USER
+          valueFrom:
+            secretKeyRef:
+              name: keyvault
+              key: dbUsername
+        - name: DATABASE_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: keyvault
+              key: dbPassword
+        - name: DATABASE_PORT
+          value: "3306"
+        - name: DATABASE_NAME
+          valueFrom:
+            secretKeyRef:
+              name: keyvault
+              key: dbTable
+        ports:
+        - containerPort: 3000
+        imagePullPolicy: Always
+        volumeMounts:
+          - name: secrets-store
+            mountPath: "/mnt/secrets-store"
+            readOnly: true
+      volumes:
+        - name: secrets-store
+          csi:
+            driver: secrets-store.csi.k8s.io
+            readOnly: true
+            volumeAttributes:
+              secretProviderClass: "azure-secrets"
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: filevault
+spec:
+  ports:
+  - port: 80
+    targetPort: 3000
+  selector:
+    app: filevault
+  type: LoadBalancer

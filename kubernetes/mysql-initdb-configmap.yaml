@@ -1,0 +1,9 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: mysql-initdb-config
+data:
+  init.sql: |
+    CREATE DATABASE IF NOT EXISTS filevault;
+    USE filevault;
+    CREATE TABLE file (name varchar(255), fileKey varchar(255));
