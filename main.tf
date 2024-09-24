@@ -58,6 +58,11 @@ resource "azurerm_kubernetes_cluster" "k8s" {
     network_plugin    = "kubenet"
     load_balancer_sku = "standard"
   }
+
+  monitor_metrics {
+    annotations_allowed = null
+    labels_allowed      = null
+  }  
 }
 
 # Attach container registry to kubernetes cluster
@@ -246,6 +251,16 @@ resource "azurerm_monitor_data_collection_rule" "dcr" {
   description = "DCR for Azure Monitor Metrics Profile (Managed Prometheus)"
   depends_on = [
     azurerm_monitor_data_collection_endpoint.dce
+  ]
+}
+
+resource "azurerm_monitor_data_collection_rule_association" "dcra" {
+  name                    = "filevault-cluster"
+  target_resource_id      = azurerm_kubernetes_cluster.k8s.id
+  data_collection_rule_id = azurerm_monitor_data_collection_rule.dcr.id
+  description             = "Association of data collection rule. Deleting this association will break the data collection for this AKS Cluster."
+  depends_on = [
+    azurerm_monitor_data_collection_rule.dcr
   ]
 }
 
