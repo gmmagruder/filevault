@@ -278,7 +278,7 @@ resource "azurerm_monitor_alert_prometheus_rule_group" "kubernetes_recording_rul
     alert     = "KubernetesPodFailure"
     enabled   = true
     expression = <<EOF
-      kube_pod_container_status_restarts_total{job="kube-state-metrics"} > 0
+      kube_pod_container_status_restarts_total > 0
     EOF
 
     for       = "PT5M"
